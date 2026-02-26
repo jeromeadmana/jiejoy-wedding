@@ -1,0 +1,402 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
+import QRCode from "qrcode";
+import {
+  Plus,
+  Upload,
+  Download,
+  CheckCircle,
+  Clock,
+  ArrowLeft,
+  Loader2,
+  QrCode,
+  Copy,
+  Check,
+} from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { RSVP_SITE_URL } from "@/lib/constants";
+import type { Invitation } from "@/types/rsvp";
+
+export default function InvitationsPage() {
+  const router = useRouter();
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+
+  // Single creation form
+  const [guestName, setGuestName] = useState("");
+  const [maxGuests, setMaxGuests] = useState(1);
+
+  // Bulk creation
+  const [showBulk, setShowBulk] = useState(false);
+  const [bulkText, setBulkText] = useState("");
+  const [bulkCreating, setBulkCreating] = useState(false);
+
+  // QR modal
+  const [qrInvitation, setQrInvitation] = useState<Invitation | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState("");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Copy state
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const fetchInvitations = useCallback(async () => {
+    try {
+      const res = await fetch("/api/invitation");
+      if (res.status === 401) {
+        router.push("/admin/login");
+        return;
+      }
+      setInvitations(await res.json());
+    } catch (error) {
+      console.error("Failed to fetch invitations:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
+
+  useEffect(() => {
+    fetchInvitations();
+  }, [fetchInvitations]);
+
+  const handleCreate = async () => {
+    if (!guestName.trim()) return;
+    setCreating(true);
+
+    try {
+      const res = await fetch("/api/invitation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guest_name: guestName.trim(), max_guests: maxGuests }),
+      });
+
+      if (res.ok) {
+        setGuestName("");
+        setMaxGuests(1);
+        fetchInvitations();
+      }
+    } catch (error) {
+      console.error("Failed to create invitation:", error);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleBulkCreate = async () => {
+    const lines = bulkText.trim().split("\n").filter(Boolean);
+    const entries = lines.map((line) => {
+      const parts = line.split(",").map((s) => s.trim());
+      return {
+        guest_name: parts[0],
+        max_guests: parseInt(parts[1], 10) || 1,
+      };
+    }).filter((e) => e.guest_name);
+
+    if (entries.length === 0) return;
+
+    setBulkCreating(true);
+    try {
+      const res = await fetch("/api/invitation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entries }),
+      });
+
+      if (res.ok) {
+        setBulkText("");
+        setShowBulk(false);
+        fetchInvitations();
+      }
+    } catch (error) {
+      console.error("Failed to bulk create:", error);
+    } finally {
+      setBulkCreating(false);
+    }
+  };
+
+  const showQr = async (inv: Invitation) => {
+    setQrInvitation(inv);
+    const url = `${RSVP_SITE_URL}/rsvp/${inv.code}`;
+    const dataUrl = await QRCode.toDataURL(url, {
+      width: 400,
+      margin: 2,
+      color: { dark: "#2C2C2C", light: "#FFFFFF" },
+    });
+    setQrDataUrl(dataUrl);
+  };
+
+  const downloadQr = async (inv: Invitation) => {
+    const url = `${RSVP_SITE_URL}/rsvp/${inv.code}`;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    await QRCode.toCanvas(canvas, url, {
+      width: 600,
+      margin: 3,
+      color: { dark: "#2C2C2C", light: "#FFFFFF" },
+    });
+
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `qr-${inv.guest_name.replace(/\s+/g, "-").toLowerCase()}.png`;
+    a.click();
+  };
+
+  const copyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
+  const respondedCount = invitations.filter((i) => i.responded).length;
+  const pendingCount = invitations.filter((i) => !i.responded).length;
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: "var(--color-cream, #FDF8F8)" }}>
+        <p style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>Loading invitations...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: "var(--color-cream, #FDF8F8)" }}>
+      {/* Hidden canvas for QR download */}
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+
+      {/* Header */}
+      <header className="shadow-sm" style={{ backgroundColor: "var(--color-surface, #FFFFFF)" }}>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push("/admin")}
+              className="transition-colors cursor-pointer"
+              style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
+              aria-label="Back to dashboard"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="font-serif text-2xl font-bold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
+              Invitations
+            </h1>
+          </div>
+          <div className="flex items-center gap-3 text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
+            <span className="flex items-center gap-1">
+              <CheckCircle size={14} style={{ color: "var(--color-sage-dark, #C06E84)" }} />
+              {respondedCount} responded
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock size={14} />
+              {pendingCount} pending
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        {/* Create invitation */}
+        <Card className="mb-8">
+          <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
+            Create Invitation
+          </h2>
+
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
+                Guest Name
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Jane Doe"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleCreate();
+                  }
+                }}
+                className="w-full rounded-lg px-4 py-3 text-sm focus:outline-none"
+                style={{
+                  backgroundColor: "var(--color-surface, #FFFFFF)",
+                  color: "var(--color-charcoal, #2C2C2C)",
+                  border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 30%, transparent)",
+                }}
+              />
+            </div>
+            <div className="w-32">
+              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
+                Max Guests
+              </label>
+              <select
+                value={maxGuests}
+                onChange={(e) => setMaxGuests(parseInt(e.target.value, 10))}
+                className="w-full rounded-lg px-4 py-3 text-sm focus:outline-none"
+                style={{
+                  backgroundColor: "var(--color-surface, #FFFFFF)",
+                  color: "var(--color-charcoal, #2C2C2C)",
+                  border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 30%, transparent)",
+                }}
+              >
+                {Array.from({ length: 10 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>{i + 1}</option>
+                ))}
+              </select>
+            </div>
+            <Button onClick={handleCreate} disabled={creating || !guestName.trim()}>
+              {creating ? <Loader2 size={16} className="mr-1 animate-spin" /> : <Plus size={16} className="mr-1" />}
+              Create
+            </Button>
+          </div>
+
+          {/* Bulk toggle */}
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => setShowBulk(!showBulk)}
+              className="text-sm font-semibold cursor-pointer"
+              style={{ color: "var(--color-sage-dark, #C06E84)" }}
+            >
+              <Upload size={14} className="inline mr-1" />
+              {showBulk ? "Hide bulk import" : "Bulk import"}
+            </button>
+
+            {showBulk && (
+              <div className="mt-3 space-y-3">
+                <p className="text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
+                  One invitation per line: <code>Name, max_guests</code>
+                </p>
+                <textarea
+                  rows={5}
+                  placeholder={"Jane Doe, 3\nJohn Smith, 2\nThe Garcia Family, 5"}
+                  value={bulkText}
+                  onChange={(e) => setBulkText(e.target.value)}
+                  className="w-full rounded-lg px-4 py-3 text-sm focus:outline-none resize-none font-mono"
+                  style={{
+                    backgroundColor: "var(--color-surface, #FFFFFF)",
+                    color: "var(--color-charcoal, #2C2C2C)",
+                    border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 30%, transparent)",
+                  }}
+                />
+                <Button onClick={handleBulkCreate} disabled={bulkCreating || !bulkText.trim()}>
+                  {bulkCreating ? <Loader2 size={16} className="mr-1 animate-spin" /> : <Upload size={16} className="mr-1" />}
+                  Import All
+                </Button>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Invitations list */}
+        <Card className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr style={{ borderBottom: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 10%, transparent)" }}>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Guest</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Code</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Max Guests</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Status</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Created</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invitations.map((inv) => (
+                <tr key={inv.id} style={{ borderBottom: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 5%, transparent)" }}>
+                  <td className="py-3 font-medium" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>{inv.guest_name}</td>
+                  <td className="py-3">
+                    <code className="text-xs px-2 py-1 rounded" style={{ backgroundColor: "color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 10%, transparent)", color: "var(--color-charcoal, #2C2C2C)" }}>
+                      {inv.code}
+                    </code>
+                  </td>
+                  <td className="py-3" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>{inv.max_guests}</td>
+                  <td className="py-3">
+                    <Badge variant={inv.responded ? "success" : "neutral"}>
+                      {inv.responded ? "Responded" : "Pending"}
+                    </Badge>
+                  </td>
+                  <td className="py-3" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
+                    {new Date(inv.created_at).toLocaleDateString()}
+                  </td>
+                  <td className="py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => showQr(inv)}
+                        className="transition-colors cursor-pointer"
+                        style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
+                        aria-label="Show QR code"
+                        title="Show QR"
+                      >
+                        <QrCode size={16} />
+                      </button>
+                      <button
+                        onClick={() => copyCode(inv.code)}
+                        className="transition-colors cursor-pointer"
+                        style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
+                        aria-label="Copy invitation code"
+                        title="Copy code"
+                      >
+                        {copiedCode === inv.code ? <Check size={16} style={{ color: "var(--color-sage-dark, #C06E84)" }} /> : <Copy size={16} />}
+                      </button>
+                      <button
+                        onClick={() => downloadQr(inv)}
+                        className="transition-colors cursor-pointer"
+                        style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
+                        aria-label="Download QR code"
+                        title="Download QR"
+                      >
+                        <Download size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {invitations.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
+                    No invitations created yet. Create your first one above.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </Card>
+      </div>
+
+      {/* QR Modal */}
+      {qrInvitation && qrDataUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setQrInvitation(null)}>
+          <div
+            className="rounded-2xl p-8 max-w-sm w-full mx-4 text-center"
+            style={{ backgroundColor: "var(--color-surface, #FFFFFF)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-serif text-xl font-bold mb-1" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
+              {qrInvitation.guest_name}
+            </h3>
+            <p className="text-sm mb-4" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
+              Max {qrInvitation.max_guests} guest{qrInvitation.max_guests > 1 ? "s" : ""} &bull; Code: {qrInvitation.code}
+            </p>
+            <img src={qrDataUrl} alt="QR Code" className="mx-auto rounded-lg" />
+            <p className="mt-3 text-xs break-all" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
+              {RSVP_SITE_URL}/rsvp/{qrInvitation.code}
+            </p>
+            <div className="flex gap-3 mt-6 justify-center">
+              <Button size="sm" onClick={() => downloadQr(qrInvitation)}>
+                <Download size={14} className="mr-1" />
+                Download
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setQrInvitation(null)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -13,6 +13,16 @@ export const rsvpSchema = z.object({
   dietary_notes: z.string().max(500).optional(),
   message: z.string().max(1000).optional(),
   guests: z.array(guestSchema).optional(),
+  invitation_code: z.string().min(1, "Invitation code is required"),
+});
+
+export const invitationSchema = z.object({
+  guest_name: z.string().min(2, "Guest name is required"),
+  max_guests: z.number().int().min(1).max(10),
+});
+
+export const bulkInvitationSchema = z.object({
+  entries: z.array(invitationSchema).min(1, "At least one invitation is required"),
 });
 
 export type RsvpFormData = z.input<typeof rsvpSchema>;

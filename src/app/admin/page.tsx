@@ -11,6 +11,7 @@ import {
   Trash2,
   Download,
   LogOut,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -108,10 +109,16 @@ export default function AdminDashboard() {
           <h1 className="font-serif text-2xl font-bold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
             RSVP Dashboard
           </h1>
-          <Button variant="secondary" size="sm" onClick={handleLogout}>
-            <LogOut size={16} className="mr-1" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button variant="secondary" size="sm" onClick={() => router.push("/admin/invitations")}>
+              <Mail size={16} className="mr-1" />
+              Invitations
+            </Button>
+            <Button variant="secondary" size="sm" onClick={handleLogout}>
+              <LogOut size={16} className="mr-1" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 

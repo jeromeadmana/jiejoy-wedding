@@ -27,3 +27,14 @@ export interface RsvpStats {
   notAttending: number;
   totalGuests: number;
 }
+
+export interface Invitation {
+  id: string;
+  code: string;
+  guest_name: string;
+  max_guests: number;
+  rsvp_id: string | null;
+  responded: boolean;
+  responded_at: string | null;
+  created_at: string;
+}
