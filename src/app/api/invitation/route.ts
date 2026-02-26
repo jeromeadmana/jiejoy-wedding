@@ -20,15 +20,27 @@ export async function POST(req: NextRequest) {
 
     // Support both single and bulk creation
     const entries = Array.isArray(body.entries) ? body.entries : [body];
+    const isBulk = Array.isArray(body.entries);
 
-    const results = [];
+    const created = [];
+    const skipped: { guest_name: string; reason: string }[] = [];
+
     for (const entry of entries) {
       const parsed = invitationSchema.safeParse(entry);
       if (!parsed.success) {
-        return NextResponse.json(
-          { error: "Validation failed", details: parsed.error.flatten(), entry },
-          { status: 400 }
-        );
+        if (!isBulk) {
+          // Single creation: fail immediately with details
+          return NextResponse.json(
+            { error: "Validation failed", details: parsed.error.flatten() },
+            { status: 400 }
+          );
+        }
+        // Bulk: skip invalid entries and continue
+        skipped.push({
+          guest_name: entry.guest_name || "Unknown",
+          reason: parsed.error.issues.map((i) => i.message).join(", "),
+        });
+        continue;
       }
 
       const code = generateCode();
@@ -44,13 +56,21 @@ export async function POST(req: NextRequest) {
 
       if (error) {
         console.error("Invitation insert error:", error);
-        return NextResponse.json({ error: "Failed to create invitation" }, { status: 500 });
+        if (!isBulk) {
+          return NextResponse.json({ error: "Failed to create invitation" }, { status: 500 });
+        }
+        skipped.push({ guest_name: parsed.data.guest_name, reason: "Database error" });
+        continue;
       }
 
-      results.push(data);
+      created.push(data);
     }
 
-    return NextResponse.json(results, { status: 201 });
+    if (isBulk) {
+      return NextResponse.json({ created, skipped }, { status: 201 });
+    }
+
+    return NextResponse.json(created, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

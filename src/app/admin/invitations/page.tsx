@@ -15,6 +15,8 @@ import {
   Copy,
   Check,
   Trash2,
+  X,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -22,11 +24,20 @@ import { Badge } from "@/components/ui/Badge";
 import { RSVP_SITE_URL } from "@/lib/constants";
 import type { Invitation } from "@/types/rsvp";
 
+interface Toast {
+  id: number;
+  type: "success" | "error" | "warning";
+  message: string;
+}
+
+let toastId = 0;
+
 export default function InvitationsPage() {
   const router = useRouter();
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   // Single creation form
   const [guestName, setGuestName] = useState("");
@@ -44,6 +55,18 @@ export default function InvitationsPage() {
 
   // Copy state
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const addToast = useCallback((type: Toast["type"], message: string) => {
+    const id = ++toastId;
+    setToasts((prev) => [...prev, { id, type, message }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 5000);
+  }, []);
+
+  const removeToast = (id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
 
   const fetchInvitations = useCallback(async () => {
     try {
@@ -78,10 +101,15 @@ export default function InvitationsPage() {
       if (res.ok) {
         setGuestName("");
         setMaxGuests(1);
+        addToast("success", `Invitation created for "${guestName.trim()}"`);
         fetchInvitations();
+      } else {
+        const body = await res.json();
+        addToast("error", body.error || "Failed to create invitation");
       }
     } catch (error) {
       console.error("Failed to create invitation:", error);
+      addToast("error", "Failed to create invitation");
     } finally {
       setCreating(false);
     }
@@ -107,13 +135,34 @@ export default function InvitationsPage() {
         body: JSON.stringify({ entries }),
       });
 
+      const body = await res.json();
+
       if (res.ok) {
-        setBulkText("");
-        setShowBulk(false);
-        fetchInvitations();
+        const created = body.created || [];
+        const skipped = body.skipped || [];
+
+        if (created.length > 0) {
+          addToast("success", `${created.length} invitation${created.length > 1 ? "s" : ""} created successfully`);
+        }
+
+        if (skipped.length > 0) {
+          const skippedNames = skipped.map((s: { guest_name: string; reason: string }) =>
+            `${s.guest_name}: ${s.reason}`
+          ).join("\n");
+          addToast("warning", `${skipped.length} skipped:\n${skippedNames}`);
+        }
+
+        if (created.length > 0) {
+          setBulkText("");
+          setShowBulk(false);
+          fetchInvitations();
+        }
+      } else {
+        addToast("error", body.error || "Failed to import invitations");
       }
     } catch (error) {
       console.error("Failed to bulk create:", error);
+      addToast("error", "Failed to import invitations");
     } finally {
       setBulkCreating(false);
     }
@@ -158,13 +207,15 @@ export default function InvitationsPage() {
       });
 
       if (res.ok) {
+        addToast("success", `Invitation for "${inv.guest_name}" deleted`);
         fetchInvitations();
       } else {
         const body = await res.json();
-        alert(body.error || "Failed to delete invitation");
+        addToast("error", body.error || "Failed to delete invitation");
       }
     } catch (error) {
       console.error("Failed to delete invitation:", error);
+      addToast("error", "Failed to delete invitation");
     }
   };
 
@@ -185,10 +236,60 @@ export default function InvitationsPage() {
     );
   }
 
+  const toastStyles: Record<Toast["type"], { bg: string; border: string; icon: string }> = {
+    success: {
+      bg: "color-mix(in srgb, var(--color-sage, #D4849A) 10%, var(--color-surface, #FFFFFF))",
+      border: "var(--color-sage-dark, #C06E84)",
+      icon: "var(--color-sage-dark, #C06E84)",
+    },
+    error: {
+      bg: "color-mix(in srgb, var(--color-dusty-rose, #C86464) 10%, var(--color-surface, #FFFFFF))",
+      border: "var(--color-dusty-rose, #C86464)",
+      icon: "var(--color-dusty-rose, #C86464)",
+    },
+    warning: {
+      bg: "color-mix(in srgb, var(--color-gold, #C9A96E) 10%, var(--color-surface, #FFFFFF))",
+      border: "var(--color-gold, #C9A96E)",
+      icon: "var(--color-gold, #C9A96E)",
+    },
+  };
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--color-cream, #FDF8F8)" }}>
       {/* Hidden canvas for QR download */}
       <canvas ref={canvasRef} style={{ display: "none" }} />
+
+      {/* Toast notifications */}
+      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
+        {toasts.map((toast) => {
+          const style = toastStyles[toast.type];
+          return (
+            <div
+              key={toast.id}
+              className="flex items-start gap-3 rounded-lg px-4 py-3 shadow-lg text-sm animate-in"
+              style={{
+                backgroundColor: style.bg,
+                borderLeft: `3px solid ${style.border}`,
+              }}
+            >
+              {toast.type === "success" && <CheckCircle size={16} className="shrink-0 mt-0.5" style={{ color: style.icon }} />}
+              {toast.type === "error" && <AlertCircle size={16} className="shrink-0 mt-0.5" style={{ color: style.icon }} />}
+              {toast.type === "warning" && <AlertCircle size={16} className="shrink-0 mt-0.5" style={{ color: style.icon }} />}
+              <p className="flex-1 whitespace-pre-line" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
+                {toast.message}
+              </p>
+              <button
+                onClick={() => removeToast(toast.id)}
+                className="shrink-0 cursor-pointer"
+                style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
+                aria-label="Dismiss"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          );
+        })}
+      </div>
 
       {/* Header */}
       <header className="shadow-sm" style={{ backgroundColor: "var(--color-surface, #FFFFFF)" }}>
@@ -290,7 +391,7 @@ export default function InvitationsPage() {
             {showBulk && (
               <div className="mt-3 space-y-3">
                 <p className="text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
-                  One invitation per line: <code>Name, max_guests</code>
+                  One per line: <code>Name, max_guests</code> (max guests must be 1-10)
                 </p>
                 <textarea
                   rows={5}
