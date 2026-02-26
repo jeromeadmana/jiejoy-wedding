@@ -9,6 +9,7 @@ const PHOTOS = [
   { src: "/images/wedding.jpg", alt: "Wedding day" },
   { src: "/images/proposal.jpg", alt: "The proposal" },
   { src: "/images/date-night.jpg", alt: "Date night" },
+  { src: "/images/road-trip.jpg", alt: "Laughing by the roadside on a motorbike adventure" },
 ];
 
 export function PhotoGallery() {
