@@ -111,7 +111,7 @@ export const WEDDING = {
 
 export const RSVP_DEADLINE = new Date("2026-09-12T23:59:59+08:00");
 
-export const RSVP_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jiejoy-wedding.vercel.app";
+export const RSVP_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jieandjoy.site";
 
 export const NAV_LINKS = [
   { label: "Our Story", href: "#our-story" },
