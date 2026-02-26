@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
@@ -27,6 +27,23 @@ export function PhotoGallery() {
     if (lightboxIndex === null) return;
     setLightboxIndex((lightboxIndex - 1 + PHOTOS.length) % PHOTOS.length);
   };
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (lightboxIndex === null) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowLeft") goPrev();
+    },
+    [lightboxIndex]
+  );
+
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [lightboxIndex, handleKeyDown]);
 
   return (
     <SectionWrapper

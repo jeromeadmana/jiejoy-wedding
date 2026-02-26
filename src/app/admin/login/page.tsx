@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Lock } from "lucide-react";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -72,10 +71,11 @@ export default function AdminLoginPage() {
             <p className="text-sm text-dusty-rose-dark">{error}</p>
           )}
 
-          <Button
+          <button
             type="submit"
-            className="w-full"
             disabled={loading}
+            className="inline-flex w-full items-center justify-center rounded-lg px-6 py-3 font-sans font-semibold tracking-wide text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            style={{ backgroundColor: "var(--color-charcoal, #2C2C2C)" }}
           >
             {loading ? (
               <>
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
             ) : (
               "Sign In"
             )}
-          </Button>
+          </button>
         </form>
       </div>
     </div>

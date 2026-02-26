@@ -3,7 +3,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 
-const secret = new TextEncoder().encode(process.env.ADMIN_JWT_SECRET || "dev-secret");
+// Dummy hash to compare against when user is not found (prevents timing attacks)
+const DUMMY_HASH = "$2b$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ012";
+const secret = new TextEncoder().encode(process.env.ADMIN_JWT_SECRET);
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,18 +19,19 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = createAdminClient();
-    const { data: admin, error } = await supabase
+    const { data: admin } = await supabase
       .from("jiejoy_admin_users")
       .select("*")
       .eq("username", username)
       .single();
 
-    if (error || !admin) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-    }
+    // Always run bcrypt.compare to prevent timing attacks
+    const passwordValid = await bcrypt.compare(
+      password,
+      admin?.password_hash || DUMMY_HASH
+    );
 
-    const passwordValid = await bcrypt.compare(password, admin.password_hash);
-    if (!passwordValid) {
+    if (!admin || !passwordValid) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 

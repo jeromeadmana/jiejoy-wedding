@@ -12,7 +12,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary:
     "bg-sage text-white hover:bg-sage-dark focus:ring-sage/50",
   secondary:
-    "border-2 border-sage text-sage hover:bg-sage hover:text-white focus:ring-sage/50",
+    "border-2 border-sage text-sage hover:bg-sage-dark hover:text-white focus:ring-sage/50",
   accent:
     "bg-dusty-rose text-white hover:bg-dusty-rose-dark focus:ring-dusty-rose/50",
 };
