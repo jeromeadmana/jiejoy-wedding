@@ -5,7 +5,7 @@ import { invitationSchema } from "@/lib/validators";
 import { verifyAdmin } from "@/lib/auth";
 
 function generateCode(): string {
-  return randomBytes(4).toString("hex"); // 8-char hex string
+  return randomBytes(12).toString("hex"); // 24-char hex string (~10^28 combinations)
 }
 
 // POST — Admin: create invitation(s)
@@ -75,4 +75,52 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json(data);
+}
+
+// DELETE — Admin: hard delete an unconfirmed invitation
+export async function DELETE(req: NextRequest) {
+  if (!(await verifyAdmin(req))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { id } = await req.json();
+    if (!id) {
+      return NextResponse.json({ error: "Invitation ID required" }, { status: 400 });
+    }
+
+    const supabase = createAdminClient();
+
+    // Only allow deletion of invitations that haven't been responded to
+    const { data: invitation } = await supabase
+      .from("jiejoy_invitations")
+      .select("id, responded")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (!invitation) {
+      return NextResponse.json({ error: "Invitation not found" }, { status: 404 });
+    }
+
+    if (invitation.responded) {
+      return NextResponse.json(
+        { error: "Cannot delete an invitation that has already been responded to" },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await supabase
+      .from("jiejoy_invitations")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Invitation delete error:", error);
+      return NextResponse.json({ error: "Failed to delete invitation" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

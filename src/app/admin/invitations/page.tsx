@@ -14,6 +14,7 @@ import {
   QrCode,
   Copy,
   Check,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -144,6 +145,27 @@ export default function InvitationsPage() {
     a.href = canvas.toDataURL("image/png");
     a.download = `qr-${inv.guest_name.replace(/\s+/g, "-").toLowerCase()}.png`;
     a.click();
+  };
+
+  const handleDelete = async (inv: Invitation) => {
+    if (!confirm(`Delete invitation for "${inv.guest_name}"? This cannot be undone.`)) return;
+
+    try {
+      const res = await fetch("/api/invitation", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: inv.id }),
+      });
+
+      if (res.ok) {
+        fetchInvitations();
+      } else {
+        const body = await res.json();
+        alert(body.error || "Failed to delete invitation");
+      }
+    } catch (error) {
+      console.error("Failed to delete invitation:", error);
+    }
   };
 
   const copyCode = (code: string) => {
@@ -351,6 +373,17 @@ export default function InvitationsPage() {
                       >
                         <Download size={16} />
                       </button>
+                      {!inv.responded && (
+                        <button
+                          onClick={() => handleDelete(inv)}
+                          className="transition-colors cursor-pointer"
+                          style={{ color: "var(--color-dusty-rose, #C86464)" }}
+                          aria-label="Delete invitation"
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

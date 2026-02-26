@@ -1,11 +1,61 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+// In-memory rate limiter: max 10 lookups per IP per 5 minutes
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
+const RATE_LIMIT_MAX = 10;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return false;
+  }
+
+  entry.count++;
+  return true;
+}
+
+// Periodic cleanup to prevent memory leak (runs every 10 min)
+if (typeof globalThis !== "undefined") {
+  const cleanup = () => {
+    const now = Date.now();
+    for (const [ip, entry] of rateLimitMap) {
+      if (now > entry.resetAt) rateLimitMap.delete(ip);
+    }
+  };
+  // Use a global flag to avoid duplicate intervals
+  const g = globalThis as unknown as { _rateLimitCleanup?: boolean };
+  if (!g._rateLimitCleanup) {
+    g._rateLimitCleanup = true;
+    setInterval(cleanup, 10 * 60 * 1000);
+  }
+}
+
 // GET — Public: lookup invitation by code
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
+  // Rate limit by IP
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || req.headers.get("x-real-ip")
+    || "unknown";
+
+  if (!checkRateLimit(ip)) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   const { code } = await params;
 
   const supabase = createAdminClient();
