@@ -10,14 +10,6 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 
-const MEAL_OPTIONS = [
-  { value: "beef", label: "Beef" },
-  { value: "chicken", label: "Chicken" },
-  { value: "fish", label: "Fish" },
-  { value: "vegetarian", label: "Vegetarian" },
-  { value: "vegan", label: "Vegan" },
-];
-
 export function RsvpForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,7 +28,6 @@ export function RsvpForm() {
       email: "",
       attending: true,
       guest_count: 0,
-      meal_choice: undefined,
       dietary_notes: "",
       message: "",
       guests: [],
@@ -44,7 +35,6 @@ export function RsvpForm() {
   });
 
   const attending = watch("attending");
-  const guestCount = watch("guest_count");
 
   const { fields, replace } = useFieldArray({ control, name: "guests" });
 
@@ -53,7 +43,6 @@ export function RsvpForm() {
     const count = parseInt(e.target.value, 10);
     const newGuests = Array.from({ length: count }, (_, i) => ({
       name: fields[i]?.name || "",
-      meal_choice: fields[i]?.meal_choice || ("beef" as const),
       is_child: fields[i]?.is_child || false,
     }));
     replace(newGuests);
@@ -161,14 +150,6 @@ export function RsvpForm() {
         {attending && (
           <>
             <Select
-              label="Meal Preference"
-              options={MEAL_OPTIONS}
-              placeholder="Select your meal"
-              {...register("meal_choice")}
-              error={errors.meal_choice?.message}
-            />
-
-            <Select
               label="Additional Guests"
               options={[
                 { value: "0", label: "Just me" },
@@ -198,11 +179,6 @@ export function RsvpForm() {
                   {...register(`guests.${index}.name`)}
                   error={errors.guests?.[index]?.name?.message}
                 />
-                <Select
-                  label="Meal Preference"
-                  options={MEAL_OPTIONS}
-                  {...register(`guests.${index}.meal_choice`)}
-                />
                 <label className="flex items-center gap-2 cursor-pointer text-sm">
                   <input
                     type="checkbox"
@@ -216,12 +192,12 @@ export function RsvpForm() {
 
             <div className="flex flex-col gap-1.5">
               <label htmlFor="dietary_notes" className="text-sm font-semibold text-charcoal">
-                Dietary Restrictions
+                Dietary Restrictions / Allergies
               </label>
               <textarea
                 id="dietary_notes"
                 rows={2}
-                placeholder="Any allergies or dietary needs?"
+                placeholder="Any allergies or dietary needs we should know about?"
                 {...register("dietary_notes")}
                 className="rounded-lg border border-warm-gray/30 bg-white px-4 py-3 text-charcoal placeholder:text-warm-gray/50 transition-colors duration-200 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none"
               />

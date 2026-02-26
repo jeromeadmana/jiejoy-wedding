@@ -63,13 +63,12 @@ export default function AdminDashboard() {
   };
 
   const handleExportCSV = () => {
-    const headers = ["Name", "Email", "Attending", "Guests", "Meal", "Dietary Notes", "Message", "Date"];
+    const headers = ["Name", "Email", "Attending", "Guests", "Dietary Notes", "Message", "Date"];
     const rows = rsvps.map((r) => [
       r.name,
       r.email,
       r.attending ? "Yes" : "No",
       r.guest_count,
-      r.meal_choice || "",
       r.dietary_notes || "",
       r.message || "",
       new Date(r.created_at).toLocaleDateString(),
@@ -159,31 +158,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Meal breakdown */}
-        {stats && stats.totalRsvps > 0 && (
-          <Card className="mb-8">
-            <h3 className="mb-4 font-semibold text-charcoal">Meal Breakdown</h3>
-            <div className="space-y-3">
-              {Object.entries(stats.mealBreakdown).map(([meal, count]) => {
-                const total = Object.values(stats.mealBreakdown).reduce((a, b) => a + b, 0);
-                const pct = total > 0 ? (count / total) * 100 : 0;
-                return (
-                  <div key={meal} className="flex items-center gap-3">
-                    <span className="w-24 text-sm capitalize text-warm-gray">{meal}</span>
-                    <div className="flex-1 rounded-full bg-cream h-4 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-sage transition-all duration-500"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                    <span className="w-8 text-sm font-semibold text-charcoal text-right">{count}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-        )}
-
         {/* Filters & actions */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
@@ -222,7 +196,6 @@ export default function AdminDashboard() {
                 <th className="pb-3 font-semibold text-charcoal">Email</th>
                 <th className="pb-3 font-semibold text-charcoal">Status</th>
                 <th className="pb-3 font-semibold text-charcoal">Guests</th>
-                <th className="pb-3 font-semibold text-charcoal">Meal</th>
                 <th className="pb-3 font-semibold text-charcoal">Date</th>
                 <th className="pb-3 font-semibold text-charcoal">Actions</th>
               </tr>
@@ -238,9 +211,6 @@ export default function AdminDashboard() {
                     </Badge>
                   </td>
                   <td className="py-3 text-warm-gray">{rsvp.guest_count}</td>
-                  <td className="py-3 capitalize text-warm-gray">
-                    {rsvp.meal_choice || "—"}
-                  </td>
                   <td className="py-3 text-warm-gray">
                     {new Date(rsvp.created_at).toLocaleDateString()}
                   </td>
@@ -257,7 +227,7 @@ export default function AdminDashboard() {
               ))}
               {rsvps.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-warm-gray">
+                  <td colSpan={6} className="py-8 text-center text-warm-gray">
                     No RSVPs found.
                   </td>
                 </tr>

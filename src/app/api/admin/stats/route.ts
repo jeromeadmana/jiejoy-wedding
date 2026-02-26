@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   const { data: rsvps, error } = await supabase
     .from("jiejoy_rsvps")
-    .select("attending, guest_count, meal_choice")
+    .select("attending, guest_count")
     .eq("is_deleted", false);
 
   if (error) {
@@ -25,20 +25,7 @@ export async function GET(req: NextRequest) {
     totalGuests: rsvps
       .filter((r) => r.attending)
       .reduce((sum, r) => sum + 1 + (r.guest_count || 0), 0),
-    mealBreakdown: {
-      beef: 0,
-      chicken: 0,
-      fish: 0,
-      vegetarian: 0,
-      vegan: 0,
-    } as Record<string, number>,
   };
-
-  for (const r of rsvps) {
-    if (r.meal_choice && r.meal_choice in stats.mealBreakdown) {
-      stats.mealBreakdown[r.meal_choice]++;
-    }
-  }
 
   return NextResponse.json(stats);
 }
