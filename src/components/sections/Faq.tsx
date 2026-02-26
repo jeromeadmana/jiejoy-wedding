@@ -11,8 +11,10 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   return (
     <div className="border-b border-warm-gray/10 animate-on-scroll">
       <button
+        type="button"
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between py-5 text-left cursor-pointer"
+        aria-expanded={open}
       >
         <span className="font-semibold text-charcoal pr-4">{q}</span>
         <ChevronDown

@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const secret = new TextEncoder().encode(process.env.ADMIN_JWT_SECRET);
-
 export async function middleware(req: NextRequest) {
+  const jwtSecret = process.env.ADMIN_JWT_SECRET;
+  if (!jwtSecret) {
+    return NextResponse.redirect(new URL("/admin/login", req.url));
+  }
+
+  const secret = new TextEncoder().encode(jwtSecret);
   const token = req.cookies.get("admin_token")?.value;
 
   if (!token) {
@@ -11,7 +15,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    await jwtVerify(token, secret!);
+    await jwtVerify(token, secret);
     return NextResponse.next();
   } catch {
     return NextResponse.redirect(new URL("/admin/login", req.url));
@@ -19,5 +23,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin"],
+  matcher: ["/admin", "/admin/((?!login).*)"],
 };

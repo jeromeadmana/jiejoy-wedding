@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                       onClick={() => handleDelete(rsvp.id)}
                       className="transition-colors cursor-pointer"
                       style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
-                      title="Delete RSVP"
+                      aria-label="Delete RSVP"
                     >
                       <Trash2 size={16} />
                     </button>

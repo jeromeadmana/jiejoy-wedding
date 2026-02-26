@@ -9,7 +9,6 @@ CREATE TABLE jiejoy_rsvps (
   email         TEXT NOT NULL,
   attending     BOOLEAN NOT NULL,
   guest_count   INTEGER NOT NULL DEFAULT 1 CHECK (guest_count >= 0 AND guest_count <= 5),
-  meal_choice   TEXT CHECK (meal_choice IN ('beef', 'chicken', 'fish', 'vegetarian', 'vegan')),
   dietary_notes TEXT,
   message       TEXT,
   is_deleted    BOOLEAN DEFAULT false NOT NULL,
@@ -22,7 +21,6 @@ CREATE TABLE jiejoy_rsvp_guests (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   rsvp_id     UUID REFERENCES jiejoy_rsvps(id) NOT NULL,
   name        TEXT NOT NULL,
-  meal_choice TEXT CHECK (meal_choice IN ('beef', 'chicken', 'fish', 'vegetarian', 'vegan')),
   is_child    BOOLEAN DEFAULT false
 );
 
