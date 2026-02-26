@@ -2,7 +2,7 @@ import { WEDDING } from "@/lib/constants";
 
 export function Footer() {
   return (
-    <footer className="bg-charcoal py-12 text-center text-white">
+    <footer className="bg-dark-bg py-12 text-center text-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <p className="font-serif text-2xl font-bold">
           {WEDDING.couple.partner1} & {WEDDING.couple.partner2}

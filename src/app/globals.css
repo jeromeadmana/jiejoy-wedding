@@ -1,7 +1,27 @@
 @import "tailwindcss";
 
-@theme inline {
+/* Register color utilities — values defined below in :root / .dark */
+@theme {
+  --color-cream: initial;
+  --color-surface: initial;
+  --color-sage: initial;
+  --color-sage-dark: initial;
+  --color-dusty-rose: initial;
+  --color-dusty-rose-dark: initial;
+  --color-charcoal: initial;
+  --color-warm-gray: initial;
+  --color-gold: initial;
+  --color-gold-dark: initial;
+  --color-dark-bg: initial;
+
+  --font-serif: var(--font-playfair-display), Georgia, serif;
+  --font-sans: var(--font-lato), "Segoe UI", sans-serif;
+}
+
+/* Light theme (default) */
+:root {
   --color-cream: #FDF8F8;
+  --color-surface: #FFFFFF;
   --color-sage: #D4849A;
   --color-sage-dark: #C06E84;
   --color-dusty-rose: #C86464;
@@ -10,9 +30,22 @@
   --color-warm-gray: #6B6B6B;
   --color-gold: #C9A96E;
   --color-gold-dark: #B8944F;
+  --color-dark-bg: #2C2C2C;
+}
 
-  --font-serif: var(--font-playfair-display), Georgia, serif;
-  --font-sans: var(--font-lato), "Segoe UI", sans-serif;
+/* Dark theme */
+.dark {
+  --color-cream: #121218;
+  --color-surface: #1E1E2E;
+  --color-sage: #E8A0B8;
+  --color-sage-dark: #D4849A;
+  --color-dusty-rose: #E07070;
+  --color-dusty-rose-dark: #C85555;
+  --color-charcoal: #E8E8EC;
+  --color-warm-gray: #9A9AA0;
+  --color-gold: #D4B87A;
+  --color-gold-dark: #C9A96E;
+  --color-dark-bg: #0A0A12;
 }
 
 html {

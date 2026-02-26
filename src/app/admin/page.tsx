@@ -103,7 +103,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-surface shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
           <h1 className="font-serif text-2xl font-bold text-charcoal">
             RSVP Dashboard
@@ -168,13 +168,13 @@ export default function AdminDashboard() {
                 placeholder="Search by name or email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="rounded-lg border border-warm-gray/30 bg-white py-2 pl-9 pr-4 text-sm text-charcoal focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20"
+                className="rounded-lg border border-warm-gray/30 bg-surface py-2 pl-9 pr-4 text-sm text-charcoal focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20"
               />
             </div>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as typeof filter)}
-              className="rounded-lg border border-warm-gray/30 bg-white py-2 px-3 text-sm text-charcoal focus:border-sage focus:outline-none"
+              className="rounded-lg border border-warm-gray/30 bg-surface py-2 px-3 text-sm text-charcoal focus:border-sage focus:outline-none"
             >
               <option value="all">All</option>
               <option value="attending">Attending</option>

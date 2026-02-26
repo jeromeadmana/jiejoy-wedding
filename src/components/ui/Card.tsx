@@ -12,7 +12,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`rounded-2xl bg-white p-6 shadow-sm ${hover ? "transition-shadow duration-300 hover:shadow-md" : ""} ${className}`}
+      className={`rounded-2xl bg-surface p-6 shadow-sm ${hover ? "transition-shadow duration-300 hover:shadow-md" : ""} ${className}`}
       {...props}
     >
       {children}

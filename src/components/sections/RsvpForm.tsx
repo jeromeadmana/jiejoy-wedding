@@ -100,7 +100,7 @@ export function RsvpForm() {
       id="rsvp"
       title="RSVP"
       subtitle="Let us know if you can make it"
-      className="bg-white"
+      className="bg-surface"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -199,7 +199,7 @@ export function RsvpForm() {
                 rows={2}
                 placeholder="Any allergies or dietary needs we should know about?"
                 {...register("dietary_notes")}
-                className="rounded-lg border border-warm-gray/30 bg-white px-4 py-3 text-charcoal placeholder:text-warm-gray/50 transition-colors duration-200 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none"
+                className="rounded-lg border border-warm-gray/30 bg-surface px-4 py-3 text-charcoal placeholder:text-warm-gray/50 transition-colors duration-200 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none"
               />
             </div>
           </>
@@ -214,7 +214,7 @@ export function RsvpForm() {
             rows={3}
             placeholder="Share your well wishes..."
             {...register("message")}
-            className="rounded-lg border border-warm-gray/30 bg-white px-4 py-3 text-charcoal placeholder:text-warm-gray/50 transition-colors duration-200 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none"
+            className="rounded-lg border border-warm-gray/30 bg-surface px-4 py-3 text-charcoal placeholder:text-warm-gray/50 transition-colors duration-200 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none"
           />
         </div>
 
