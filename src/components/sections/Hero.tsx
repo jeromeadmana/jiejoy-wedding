@@ -5,13 +5,13 @@ import { ChevronDown } from "lucide-react";
 
 export function Hero() {
   return (
-    <section id="hero" className="relative flex min-h-screen items-center justify-center overflow-hidden">
+    <section id="hero" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
       {/* Background image */}
       <Image
         src="/images/wedding.jpg"
         alt="Wedding"
         fill
-        className="object-cover"
+        className="object-contain"
         priority
         quality={85}
       />
