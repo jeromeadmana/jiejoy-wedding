@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-cream: #FDF8F0;
-  --color-sage: #87A878;
-  --color-sage-dark: #6B8F5B;
-  --color-dusty-rose: #D4A0A0;
-  --color-dusty-rose-dark: #C08080;
+  --color-cream: #FDF8F8;
+  --color-sage: #D4849A;
+  --color-sage-dark: #C06E84;
+  --color-dusty-rose: #C86464;
+  --color-dusty-rose-dark: #A85050;
   --color-charcoal: #2C2C2C;
   --color-warm-gray: #6B6B6B;
   --color-gold: #C9A96E;

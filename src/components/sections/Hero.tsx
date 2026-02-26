@@ -6,18 +6,32 @@ import { ChevronDown } from "lucide-react";
 export function Hero() {
   return (
     <section id="hero" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
-      {/* Background image */}
-      <Image
-        src="/images/wedding.jpg"
-        alt="Wedding"
-        fill
-        className="object-contain"
-        priority
-        quality={85}
-      />
+      {/* Blurred background fill */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <Image
+          src="/images/wedding.jpg"
+          alt=""
+          fill
+          className="object-cover object-center scale-125 blur-3xl"
+          priority
+          quality={20}
+          aria-hidden="true"
+        />
+      </div>
+      {/* Sharp foreground image */}
+      <div className="absolute inset-0 z-[1]">
+        <Image
+          src="/images/wedding.jpg"
+          alt="Wedding"
+          fill
+          className="object-contain"
+          priority
+          quality={85}
+        />
+      </div>
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 z-[2] bg-black/40" />
 
       {/* Content */}
       <div className="relative z-10 text-center text-white px-4">
@@ -44,7 +58,7 @@ export function Hero() {
       {/* Scroll indicator */}
       <a
         href="#our-story"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 hover:text-white transition-colors animate-bounce"
+        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-white/60 hover:text-white transition-colors animate-bounce"
         aria-label="Scroll down"
       >
         <ChevronDown size={32} />
