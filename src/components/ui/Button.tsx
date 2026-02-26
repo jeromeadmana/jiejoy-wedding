@@ -1,4 +1,6 @@
-import { ButtonHTMLAttributes } from "react";
+"use client";
+
+import { ButtonHTMLAttributes, CSSProperties } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "accent";
 type ButtonSize = "sm" | "md" | "lg";
@@ -8,13 +10,22 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
 }
 
-const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    "bg-sage text-white hover:bg-sage-dark focus:ring-sage/50",
-  secondary:
-    "border-2 border-sage text-sage hover:bg-sage-dark hover:text-white focus:ring-sage/50",
-  accent:
-    "bg-dusty-rose text-white hover:bg-dusty-rose-dark focus:ring-dusty-rose/50",
+const variantStyles: Record<ButtonVariant, { className: string; style: CSSProperties }> = {
+  primary: {
+    className: "text-white",
+    style: { backgroundColor: "var(--color-sage, #D4849A)" },
+  },
+  secondary: {
+    className: "border-2 hover:text-white",
+    style: {
+      borderColor: "var(--color-sage, #D4849A)",
+      color: "var(--color-sage, #D4849A)",
+    },
+  },
+  accent: {
+    className: "text-white",
+    style: { backgroundColor: "var(--color-dusty-rose, #C86464)" },
+  },
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -27,12 +38,40 @@ export function Button({
   variant = "primary",
   size = "md",
   className = "",
+  style: styleProp,
   children,
+  onMouseEnter,
+  onMouseLeave,
   ...props
 }: ButtonProps) {
+  const { className: variantClass, style: variantStyle } = variantStyles[variant];
+
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-lg font-sans font-semibold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg font-sans font-semibold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${variantClass} ${sizeClasses[size]} ${className}`}
+      style={{ ...variantStyle, ...styleProp }}
+      onMouseEnter={(e) => {
+        if (variant === "secondary") {
+          e.currentTarget.style.backgroundColor = "var(--color-sage-dark, #C06E84)";
+          e.currentTarget.style.color = "#fff";
+        } else if (variant === "primary") {
+          e.currentTarget.style.backgroundColor = "var(--color-sage-dark, #C06E84)";
+        } else if (variant === "accent") {
+          e.currentTarget.style.backgroundColor = "var(--color-dusty-rose-dark, #A85050)";
+        }
+        onMouseEnter?.(e);
+      }}
+      onMouseLeave={(e) => {
+        if (variant === "secondary") {
+          e.currentTarget.style.backgroundColor = "";
+          e.currentTarget.style.color = "var(--color-sage, #D4849A)";
+        } else if (variant === "primary") {
+          e.currentTarget.style.backgroundColor = "var(--color-sage, #D4849A)";
+        } else if (variant === "accent") {
+          e.currentTarget.style.backgroundColor = "var(--color-dusty-rose, #C86464)";
+        }
+        onMouseLeave?.(e);
+      }}
       {...props}
     >
       {children}
