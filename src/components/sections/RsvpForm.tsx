@@ -76,11 +76,11 @@ export function RsvpForm() {
     return (
       <SectionWrapper id="rsvp" title="RSVP" subtitle="Let us know if you can make it">
         <div className="mx-auto max-w-lg text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-sage/10">
-            <CheckCircle size={40} className="text-sage" />
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--color-sage, #D4849A) 15%, transparent)" }}>
+            <CheckCircle size={40} style={{ color: "var(--color-sage, #D4849A)" }} />
           </div>
           <h3 className="mt-6 font-serif text-2xl font-bold">Thank You!</h3>
-          <p className="mt-3 text-warm-gray">
+          <p className="mt-3" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
             Your RSVP has been received. We can&apos;t wait to celebrate with you!
           </p>
           <Button
@@ -123,7 +123,7 @@ export function RsvpForm() {
 
         {/* Attending toggle */}
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-charcoal">Will you attend?</span>
+          <span className="text-sm font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Will you attend?</span>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -168,9 +168,10 @@ export function RsvpForm() {
             {fields.map((field, index) => (
               <div
                 key={field.id}
-                className="rounded-lg border border-warm-gray/20 p-4 space-y-3"
+                className="rounded-lg p-4 space-y-3"
+                style={{ border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 20%, transparent)" }}
               >
-                <p className="text-sm font-semibold text-charcoal">
+                <p className="text-sm font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
                   Guest {index + 1}
                 </p>
                 <Input
@@ -191,7 +192,7 @@ export function RsvpForm() {
             ))}
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="dietary_notes" className="text-sm font-semibold text-charcoal">
+              <label htmlFor="dietary_notes" className="text-sm font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
                 Dietary Restrictions / Allergies
               </label>
               <textarea
@@ -199,14 +200,19 @@ export function RsvpForm() {
                 rows={2}
                 placeholder="Any allergies or dietary needs we should know about?"
                 {...register("dietary_notes")}
-                className="rounded-lg border border-warm-gray/30 bg-surface px-4 py-3 text-charcoal placeholder:text-warm-gray/50 transition-colors duration-200 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none"
+                className="rounded-lg px-4 py-3 transition-colors duration-200 focus:outline-none resize-none"
+                style={{
+                  backgroundColor: "var(--color-surface, #FFFFFF)",
+                  color: "var(--color-charcoal, #2C2C2C)",
+                  border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 30%, transparent)",
+                }}
               />
             </div>
           </>
         )}
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="message" className="text-sm font-semibold text-charcoal">
+          <label htmlFor="message" className="text-sm font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
             Message to the Couple
           </label>
           <textarea
@@ -214,12 +220,17 @@ export function RsvpForm() {
             rows={3}
             placeholder="Share your well wishes..."
             {...register("message")}
-            className="rounded-lg border border-warm-gray/30 bg-surface px-4 py-3 text-charcoal placeholder:text-warm-gray/50 transition-colors duration-200 focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none"
+            className="rounded-lg px-4 py-3 transition-colors duration-200 focus:outline-none resize-none"
+                style={{
+                  backgroundColor: "var(--color-surface, #FFFFFF)",
+                  color: "var(--color-charcoal, #2C2C2C)",
+                  border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 30%, transparent)",
+                }}
           />
         </div>
 
         {status === "error" && (
-          <div className="flex items-center gap-2 rounded-lg bg-dusty-rose/10 px-4 py-3 text-sm text-dusty-rose-dark">
+          <div className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm" style={{ backgroundColor: "color-mix(in srgb, var(--color-dusty-rose, #C86464) 10%, transparent)", color: "var(--color-dusty-rose-dark, #A85050)" }}>
             <AlertCircle size={16} />
             {errorMessage}
           </div>

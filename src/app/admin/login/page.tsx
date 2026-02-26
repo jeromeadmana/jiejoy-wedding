@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Lock } from "lucide-react";
 import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -38,16 +39,16 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-cream px-4">
+    <div className="flex min-h-screen items-center justify-center px-4" style={{ backgroundColor: "var(--color-cream, #FDF8F8)" }}>
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sage/10">
-            <Lock size={28} className="text-sage" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--color-sage, #D4849A) 15%, transparent)" }}>
+            <Lock size={28} style={{ color: "var(--color-sage, #D4849A)" }} />
           </div>
-          <h1 className="mt-4 font-serif text-2xl font-bold text-charcoal">
+          <h1 className="mt-4 font-serif text-2xl font-bold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
             Admin Login
           </h1>
-          <p className="mt-1 text-sm text-warm-gray">
+          <p className="mt-1 text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
             Sign in to manage RSVPs
           </p>
         </div>
@@ -68,14 +69,13 @@ export default function AdminLoginPage() {
           />
 
           {error && (
-            <p className="text-sm text-dusty-rose-dark">{error}</p>
+            <p className="text-sm" style={{ color: "var(--color-dusty-rose-dark, #A85050)" }}>{error}</p>
           )}
 
-          <button
+          <Button
             type="submit"
+            className="w-full"
             disabled={loading}
-            className="inline-flex w-full items-center justify-center rounded-lg px-6 py-3 font-sans font-semibold tracking-wide text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            style={{ backgroundColor: "var(--color-charcoal, #2C2C2C)" }}
           >
             {loading ? (
               <>
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
             ) : (
               "Sign In"
             )}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

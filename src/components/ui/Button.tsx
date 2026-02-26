@@ -10,21 +10,41 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
 }
 
-const variantStyles: Record<ButtonVariant, { className: string; style: CSSProperties }> = {
+const variantStyles: Record<
+  ButtonVariant,
+  {
+    className: string;
+    style: CSSProperties;
+    hoverStyle: CSSProperties;
+    resetStyle: CSSProperties;
+  }
+> = {
   primary: {
     className: "text-white",
-    style: { backgroundColor: "var(--color-sage, #D4849A)" },
+    style: { backgroundColor: "var(--color-charcoal, #2C2C2C)" },
+    hoverStyle: { backgroundColor: "var(--color-warm-gray, #6B6B6B)" },
+    resetStyle: { backgroundColor: "var(--color-charcoal, #2C2C2C)" },
   },
   secondary: {
-    className: "border-2 hover:text-white",
+    className: "border-2",
     style: {
-      borderColor: "var(--color-sage, #D4849A)",
-      color: "var(--color-sage, #D4849A)",
+      borderColor: "var(--color-charcoal, #2C2C2C)",
+      color: "var(--color-charcoal, #2C2C2C)",
+    },
+    hoverStyle: {
+      backgroundColor: "var(--color-charcoal, #2C2C2C)",
+      color: "#fff",
+    },
+    resetStyle: {
+      backgroundColor: "",
+      color: "var(--color-charcoal, #2C2C2C)",
     },
   },
   accent: {
     className: "text-white",
     style: { backgroundColor: "var(--color-dusty-rose, #C86464)" },
+    hoverStyle: { backgroundColor: "var(--color-dusty-rose-dark, #A85050)" },
+    resetStyle: { backgroundColor: "var(--color-dusty-rose, #C86464)" },
   },
 };
 
@@ -44,32 +64,18 @@ export function Button({
   onMouseLeave,
   ...props
 }: ButtonProps) {
-  const { className: variantClass, style: variantStyle } = variantStyles[variant];
+  const v = variantStyles[variant];
 
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-lg font-sans font-semibold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${variantClass} ${sizeClasses[size]} ${className}`}
-      style={{ ...variantStyle, ...styleProp }}
+      className={`inline-flex items-center justify-center rounded-lg font-sans font-semibold tracking-wide transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${v.className} ${sizeClasses[size]} ${className}`}
+      style={{ ...v.style, ...styleProp }}
       onMouseEnter={(e) => {
-        if (variant === "secondary") {
-          e.currentTarget.style.backgroundColor = "var(--color-sage-dark, #C06E84)";
-          e.currentTarget.style.color = "#fff";
-        } else if (variant === "primary") {
-          e.currentTarget.style.backgroundColor = "var(--color-sage-dark, #C06E84)";
-        } else if (variant === "accent") {
-          e.currentTarget.style.backgroundColor = "var(--color-dusty-rose-dark, #A85050)";
-        }
+        Object.assign(e.currentTarget.style, v.hoverStyle);
         onMouseEnter?.(e);
       }}
       onMouseLeave={(e) => {
-        if (variant === "secondary") {
-          e.currentTarget.style.backgroundColor = "";
-          e.currentTarget.style.color = "var(--color-sage, #D4849A)";
-        } else if (variant === "primary") {
-          e.currentTarget.style.backgroundColor = "var(--color-sage, #D4849A)";
-        } else if (variant === "accent") {
-          e.currentTarget.style.backgroundColor = "var(--color-dusty-rose, #C86464)";
-        }
+        Object.assign(e.currentTarget.style, v.resetStyle);
         onMouseLeave?.(e);
       }}
       {...props}

@@ -94,18 +94,18 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-cream">
-        <p className="text-warm-gray">Loading dashboard...</p>
+      <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: "var(--color-cream, #FDF8F8)" }}>
+        <p style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>Loading dashboard...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--color-cream, #FDF8F8)" }}>
       {/* Header */}
-      <header className="bg-surface shadow-sm">
+      <header className="shadow-sm" style={{ backgroundColor: "var(--color-surface, #FFFFFF)" }}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
-          <h1 className="font-serif text-2xl font-bold text-charcoal">
+          <h1 className="font-serif text-2xl font-bold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
             RSVP Dashboard
           </h1>
           <Button variant="secondary" size="sm" onClick={handleLogout}>
@@ -120,39 +120,39 @@ export default function AdminDashboard() {
         {stats && (
           <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sage/10">
-                <Users size={24} className="text-sage" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--color-sage, #D4849A) 15%, transparent)" }}>
+                <Users size={24} style={{ color: "var(--color-sage, #D4849A)" }} />
               </div>
               <div>
-                <p className="text-sm text-warm-gray">Total RSVPs</p>
-                <p className="text-2xl font-bold text-charcoal">{stats.totalRsvps}</p>
+                <p className="text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>Total RSVPs</p>
+                <p className="text-2xl font-bold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>{stats.totalRsvps}</p>
               </div>
             </Card>
             <Card className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sage/10">
-                <UserCheck size={24} className="text-sage" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--color-sage, #D4849A) 15%, transparent)" }}>
+                <UserCheck size={24} style={{ color: "var(--color-sage, #D4849A)" }} />
               </div>
               <div>
-                <p className="text-sm text-warm-gray">Attending</p>
-                <p className="text-2xl font-bold text-sage">{stats.attending}</p>
+                <p className="text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>Attending</p>
+                <p className="text-2xl font-bold" style={{ color: "var(--color-sage-dark, #C06E84)" }}>{stats.attending}</p>
               </div>
             </Card>
             <Card className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-dusty-rose/10">
-                <UserX size={24} className="text-dusty-rose" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--color-dusty-rose, #C86464) 15%, transparent)" }}>
+                <UserX size={24} style={{ color: "var(--color-dusty-rose, #C86464)" }} />
               </div>
               <div>
-                <p className="text-sm text-warm-gray">Not Attending</p>
-                <p className="text-2xl font-bold text-dusty-rose">{stats.notAttending}</p>
+                <p className="text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>Not Attending</p>
+                <p className="text-2xl font-bold" style={{ color: "var(--color-dusty-rose, #C86464)" }}>{stats.notAttending}</p>
               </div>
             </Card>
             <Card className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/10">
-                <UsersRound size={24} className="text-gold" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--color-gold, #C9A96E) 15%, transparent)" }}>
+                <UsersRound size={24} style={{ color: "var(--color-gold, #C9A96E)" }} />
               </div>
               <div>
-                <p className="text-sm text-warm-gray">Total Guests</p>
-                <p className="text-2xl font-bold text-charcoal">{stats.totalGuests}</p>
+                <p className="text-sm" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>Total Guests</p>
+                <p className="text-2xl font-bold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>{stats.totalGuests}</p>
               </div>
             </Card>
           </div>
@@ -162,19 +162,29 @@ export default function AdminDashboard() {
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--color-warm-gray, #6B6B6B)" }} />
               <input
                 type="text"
                 placeholder="Search by name or email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="rounded-lg border border-warm-gray/30 bg-surface py-2 pl-9 pr-4 text-sm text-charcoal focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20"
+                className="rounded-lg py-2 pl-9 pr-4 text-sm focus:outline-none"
+                style={{
+                  backgroundColor: "var(--color-surface, #FFFFFF)",
+                  color: "var(--color-charcoal, #2C2C2C)",
+                  border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 30%, transparent)",
+                }}
               />
             </div>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as typeof filter)}
-              className="rounded-lg border border-warm-gray/30 bg-surface py-2 px-3 text-sm text-charcoal focus:border-sage focus:outline-none"
+              className="rounded-lg py-2 px-3 text-sm focus:outline-none"
+              style={{
+                backgroundColor: "var(--color-surface, #FFFFFF)",
+                color: "var(--color-charcoal, #2C2C2C)",
+                border: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 30%, transparent)",
+              }}
             >
               <option value="all">All</option>
               <option value="attending">Attending</option>
@@ -191,33 +201,34 @@ export default function AdminDashboard() {
         <Card className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-warm-gray/10">
-                <th className="pb-3 font-semibold text-charcoal">Name</th>
-                <th className="pb-3 font-semibold text-charcoal">Email</th>
-                <th className="pb-3 font-semibold text-charcoal">Status</th>
-                <th className="pb-3 font-semibold text-charcoal">Guests</th>
-                <th className="pb-3 font-semibold text-charcoal">Date</th>
-                <th className="pb-3 font-semibold text-charcoal">Actions</th>
+              <tr style={{ borderBottom: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 10%, transparent)" }}>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Name</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Email</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Status</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Guests</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Date</th>
+                <th className="pb-3 font-semibold" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {rsvps.map((rsvp) => (
-                <tr key={rsvp.id} className="border-b border-warm-gray/5">
-                  <td className="py-3 font-medium text-charcoal">{rsvp.name}</td>
-                  <td className="py-3 text-warm-gray">{rsvp.email}</td>
+                <tr key={rsvp.id} style={{ borderBottom: "1px solid color-mix(in srgb, var(--color-warm-gray, #6B6B6B) 5%, transparent)" }}>
+                  <td className="py-3 font-medium" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>{rsvp.name}</td>
+                  <td className="py-3" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>{rsvp.email}</td>
                   <td className="py-3">
                     <Badge variant={rsvp.attending ? "success" : "danger"}>
                       {rsvp.attending ? "Attending" : "Declined"}
                     </Badge>
                   </td>
-                  <td className="py-3 text-warm-gray">{rsvp.guest_count}</td>
-                  <td className="py-3 text-warm-gray">
+                  <td className="py-3" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>{rsvp.guest_count}</td>
+                  <td className="py-3" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
                     {new Date(rsvp.created_at).toLocaleDateString()}
                   </td>
                   <td className="py-3">
                     <button
                       onClick={() => handleDelete(rsvp.id)}
-                      className="text-warm-gray hover:text-dusty-rose-dark transition-colors cursor-pointer"
+                      className="transition-colors cursor-pointer"
+                      style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
                       title="Delete RSVP"
                     >
                       <Trash2 size={16} />
@@ -227,7 +238,7 @@ export default function AdminDashboard() {
               ))}
               {rsvps.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-warm-gray">
+                  <td colSpan={6} className="py-8 text-center" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
                     No RSVPs found.
                   </td>
                 </tr>
