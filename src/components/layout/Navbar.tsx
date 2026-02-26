@@ -35,32 +35,36 @@ export function Navbar() {
   }, [mobileOpen]);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-surface/95 backdrop-blur-sm shadow-sm"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-500">
+      <div
+        className={`flex items-center justify-between transition-all duration-500 ${
+          scrolled
+            ? "mt-3 mx-2 sm:mx-4 w-full max-w-4xl rounded-2xl sm:rounded-full px-6 py-2.5 bg-surface/70 glass-pill shadow-lg shadow-black/5 border border-white/10"
+            : "w-full max-w-6xl px-4 py-4 sm:px-6 bg-transparent"
+        }`}
+      >
         {/* Logo */}
         <a
           href="#"
-          className={`font-serif text-2xl font-bold transition-colors ${
-            scrolled ? "text-charcoal" : "text-white"
+          className={`font-serif font-bold transition-all duration-500 ${
+            scrolled
+              ? "text-lg text-charcoal"
+              : "text-2xl text-white"
           }`}
         >
           {WEDDING.couple.partner1} & {WEDDING.couple.partner2}
         </a>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center gap-6 md:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className={`text-sm font-semibold tracking-wide uppercase transition-colors hover:text-sage ${
-                  scrolled ? "text-charcoal" : "text-white"
+                className={`font-semibold tracking-wide uppercase transition-all duration-300 hover:text-gold ${
+                  scrolled
+                    ? "text-xs text-charcoal"
+                    : "text-sm text-white"
                 }`}
               >
                 {link.label}
@@ -75,7 +79,7 @@ export function Navbar() {
               }`}
               aria-label="Toggle dark mode"
             >
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
+              {dark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </li>
         </ul>
