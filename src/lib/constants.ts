@@ -11,13 +11,13 @@ export const WEDDING = {
   ceremony: {
     name: "Our Lady of Peñafrancia Parish",
     address: "Peñafrancia Ave., Brgy. Peñafrancia, Naga City 4400, Camarines Sur",
-    time: "3:00 PM",
+    time: "9:00 AM",
     mapUrl: "https://maps.google.com/?q=Our+Lady+of+Peñafrancia+Shrine+Naga+City",
   },
   reception: {
     name: "Royale Emelina",
     address: "J. Miranda Ave., Magsaysay, Naga City 4400, Camarines Sur",
-    time: "5:30 PM",
+    time: "12:00 NN",
     mapUrl: "https://maps.google.com/?q=Royale+Emelina+Naga+City",
   },
   dressCode: "Semi-formal / Cocktail Attire",
@@ -62,7 +62,7 @@ export const WEDDING = {
     },
     {
       q: "What time should I arrive?",
-      a: "Please arrive at the ceremony venue by 2:45 PM to be seated before the 3:00 PM start. The reception begins at 5:30 PM.",
+      a: "Please arrive at the ceremony venue by 8:45 AM to be seated before the 9:00 AM start. The reception begins at 12:00 NN.",
     },
     {
       q: "Are children welcome?",
