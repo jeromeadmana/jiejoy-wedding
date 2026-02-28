@@ -168,30 +168,125 @@ export default function InvitationsPage() {
     }
   };
 
-  const showQr = async (inv: Invitation) => {
-    setQrInvitation(inv);
+  const buildQrCard = async (inv: Invitation, size: "preview" | "download"): Promise<string> => {
+    const scale = size === "download" ? 2 : 1;
+    const W = 400 * scale;
+    const qrSize = 220 * scale;
+    const pad = 32 * scale;
+
+    // Generate QR to a temp canvas first
+    const qrCanvas = document.createElement("canvas");
     const url = `${RSVP_SITE_URL}/rsvp/${inv.code}`;
-    const dataUrl = await QRCode.toDataURL(url, {
-      width: 400,
+    await QRCode.toCanvas(qrCanvas, url, {
+      width: qrSize,
       margin: 2,
       color: { dark: "#2C2C2C", light: "#FFFFFF" },
     });
+
+    const kasama = inv.max_guests - 1;
+    const nameSize = 22 * scale;
+    const kasamaSize = 14 * scale;
+    const labelSize = 10 * scale;
+    const headerSize = 28 * scale;
+    const dateSize = 12 * scale;
+    const headerH = 100 * scale;
+    const infoH = 60 * scale;
+    const footerH = 36 * scale;
+    const H = headerH + pad + qrSize + infoH + footerH;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return "";
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d")!;
+
+    // Background
+    ctx.fillStyle = "#FFFFFF";
+    ctx.roundRect(0, 0, W, H, 12 * scale);
+    ctx.fill();
+
+    // Gold top accent
+    const goldGrad = ctx.createLinearGradient(0, 0, W, 0);
+    goldGrad.addColorStop(0, "transparent");
+    goldGrad.addColorStop(0.5, "#C9A96E");
+    goldGrad.addColorStop(1, "transparent");
+    ctx.fillStyle = goldGrad;
+    ctx.fillRect(0, 0, W, 3 * scale);
+
+    // Header
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#C9A96E";
+    ctx.font = `${labelSize}px sans-serif`;
+    ctx.letterSpacing = `${3 * scale}px`;
+    ctx.fillText("THE WEDDING OF", W / 2, 30 * scale);
+    ctx.letterSpacing = "0px";
+
+    ctx.fillStyle = "#2C2C2C";
+    ctx.font = `600 ${headerSize}px Georgia, serif`;
+    ctx.fillText("Jie & Joy", W / 2, 62 * scale);
+
+    // Gold divider with heart
+    const divY = 76 * scale;
+    ctx.fillStyle = "#C9A96E";
+    ctx.fillRect(W / 2 - 60 * scale, divY, 40 * scale, 1 * scale);
+    ctx.fillRect(W / 2 + 20 * scale, divY, 40 * scale, 1 * scale);
+    ctx.font = `${12 * scale}px Georgia, serif`;
+    ctx.fillText("\u2665", W / 2, divY + 4 * scale);
+
+    ctx.fillStyle = "#6B6B6B";
+    ctx.font = `${dateSize}px sans-serif`;
+    ctx.fillText("September 26, 2026", W / 2, 94 * scale);
+
+    // Pink divider
+    const pinkGrad = ctx.createLinearGradient(0, 0, W, 0);
+    pinkGrad.addColorStop(0, "#FDF0F4");
+    pinkGrad.addColorStop(0.5, "#D4849A");
+    pinkGrad.addColorStop(1, "#FDF0F4");
+    ctx.fillStyle = pinkGrad;
+    ctx.fillRect(0, headerH, W, 2 * scale);
+
+    // QR code centered
+    const qrX = (W - qrSize) / 2;
+    const qrY = headerH + pad;
+    ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
+
+    // Guest name below QR
+    const infoY = qrY + qrSize + 20 * scale;
+    ctx.fillStyle = "#2C2C2C";
+    ctx.font = `600 ${nameSize}px Georgia, serif`;
+    ctx.fillText(inv.guest_name, W / 2, infoY);
+
+    // Kasama count
+    if (kasama > 0) {
+      ctx.fillStyle = "#C06E84";
+      ctx.font = `${kasamaSize}px sans-serif`;
+      ctx.fillText(`+ ${kasama} kasama`, W / 2, infoY + 22 * scale);
+    }
+
+    // Footer - hashtag
+    ctx.fillStyle = "#C9A96E";
+    ctx.font = `${labelSize}px sans-serif`;
+    ctx.letterSpacing = `${2 * scale}px`;
+    ctx.fillText("#JieAndJoyForever", W / 2, H - 12 * scale);
+    ctx.letterSpacing = "0px";
+
+    // Gold bottom accent
+    ctx.fillStyle = goldGrad;
+    ctx.fillRect(0, H - 3 * scale, W, 3 * scale);
+
+    return canvas.toDataURL("image/png");
+  };
+
+  const showQr = async (inv: Invitation) => {
+    setQrInvitation(inv);
+    const dataUrl = await buildQrCard(inv, "preview");
     setQrDataUrl(dataUrl);
   };
 
   const downloadQr = async (inv: Invitation) => {
-    const url = `${RSVP_SITE_URL}/rsvp/${inv.code}`;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    await QRCode.toCanvas(canvas, url, {
-      width: 600,
-      margin: 3,
-      color: { dark: "#2C2C2C", light: "#FFFFFF" },
-    });
-
+    const dataUrl = await buildQrCard(inv, "download");
     const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png");
+    a.href = dataUrl;
     a.download = `qr-${inv.guest_name.replace(/\s+/g, "-").toLowerCase()}.png`;
     a.click();
   };
@@ -505,21 +600,15 @@ export default function InvitationsPage() {
       {qrInvitation && qrDataUrl && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setQrInvitation(null)}>
           <div
-            className="rounded-2xl p-8 max-w-sm w-full mx-4 text-center"
+            className="rounded-2xl p-6 max-w-md w-full mx-4 text-center"
             style={{ backgroundColor: "var(--color-surface, #FFFFFF)" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-serif text-xl font-bold mb-1" style={{ color: "var(--color-charcoal, #2C2C2C)" }}>
-              {qrInvitation.guest_name}
-            </h3>
-            <p className="text-sm mb-4" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
-              Max {qrInvitation.max_guests} guest{qrInvitation.max_guests > 1 ? "s" : ""} &bull; Code: {qrInvitation.code}
-            </p>
-            <img src={qrDataUrl} alt="QR Code" className="mx-auto rounded-lg" />
+            <img src={qrDataUrl} alt="QR Invitation Card" className="mx-auto rounded-lg shadow-md" />
             <p className="mt-3 text-xs break-all" style={{ color: "var(--color-warm-gray, #6B6B6B)" }}>
               {RSVP_SITE_URL}/rsvp/{qrInvitation.code}
             </p>
-            <div className="flex gap-3 mt-6 justify-center">
+            <div className="flex gap-3 mt-5 justify-center">
               <Button size="sm" onClick={() => downloadQr(qrInvitation)}>
                 <Download size={14} className="mr-1" />
                 Download
