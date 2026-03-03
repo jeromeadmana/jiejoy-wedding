@@ -320,6 +320,30 @@ export default function InvitationsPage() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const handleExportInvitations = () => {
+    const headers = ["Guest Name", "Max Guests", "Code", "Status", "Responded At", "Created At"];
+    const rows = invitations.map((inv) => [
+      inv.guest_name,
+      inv.max_guests,
+      inv.code,
+      inv.responded ? "Responded" : "Pending",
+      inv.responded_at ? new Date(inv.responded_at).toLocaleDateString() : "",
+      new Date(inv.created_at).toLocaleDateString(),
+    ]);
+
+    const csv = [headers, ...rows].map((row) =>
+      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+    ).join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "invitations.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const respondedCount = invitations.filter((i) => i.responded).length;
   const pendingCount = invitations.filter((i) => !i.responded).length;
 
@@ -411,6 +435,14 @@ export default function InvitationsPage() {
               <Clock size={14} />
               {pendingCount} pending
             </span>
+            <button
+              onClick={handleExportInvitations}
+              className="flex items-center gap-1 transition-colors cursor-pointer ml-2"
+              style={{ color: "var(--color-warm-gray, #6B6B6B)" }}
+              title="Export CSV"
+            >
+              <Download size={14} />
+            </button>
           </div>
         </div>
       </header>

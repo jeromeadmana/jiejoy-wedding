@@ -63,6 +63,20 @@ export default function AdminDashboard() {
     fetchData();
   };
 
+  const downloadCsv = (headers: string[], rows: (string | number)[][], filename: string) => {
+    const csv = [headers, ...rows].map((row) =>
+      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
+    ).join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleExportCSV = () => {
     const headers = ["Name", "Email", "Attending", "Guests", "Dietary Notes", "Message", "Date"];
     const rows = rsvps.map((r) => [
@@ -74,18 +88,21 @@ export default function AdminDashboard() {
       r.message || "",
       new Date(r.created_at).toLocaleDateString(),
     ]);
+    downloadCsv(headers, rows, "rsvps.csv");
+  };
 
-    const csv = [headers, ...rows].map((row) =>
-      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
-    ).join("\n");
+  const handleExportGuestList = () => {
+    const headers = ["Guest Name", "Type", "Child", "RSVP By", "Email", "Attending", "Dietary Notes"];
+    const rows: (string | number)[][] = [];
 
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "rsvps.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    for (const r of rsvps) {
+      if (!r.attending) continue;
+      rows.push([r.name, "Primary", "No", r.name, r.email, "Yes", r.dietary_notes || ""]);
+      for (const g of r.jiejoy_rsvp_guests) {
+        rows.push([g.name, "Companion", g.is_child ? "Yes" : "No", r.name, r.email, "Yes", ""]);
+      }
+    }
+    downloadCsv(headers, rows, "guest-list.csv");
   };
 
   const handleLogout = () => {
@@ -198,10 +215,16 @@ export default function AdminDashboard() {
               <option value="not-attending">Not Attending</option>
             </select>
           </div>
-          <Button variant="secondary" size="sm" onClick={handleExportCSV}>
-            <Download size={16} className="mr-1" />
-            Export CSV
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" size="sm" onClick={handleExportGuestList}>
+              <Download size={16} className="mr-1" />
+              Guest List
+            </Button>
+            <Button variant="secondary" size="sm" onClick={handleExportCSV}>
+              <Download size={16} className="mr-1" />
+              All RSVPs
+            </Button>
+          </div>
         </div>
 
         {/* RSVP table */}
