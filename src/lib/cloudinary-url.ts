@@ -8,8 +8,16 @@ export const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NA
 
 export type ImageVariant = "thumb" | "lightbox" | "hero" | "card";
 
+// `thumb` is aspect-preserving (width-bounded only) because the masonry
+// grid lays out using each photo's real width/height — pre-cropping to a
+// square would cause the served image to be stretched into a non-square
+// container. Where a square thumb IS wanted (admin's aspect-square cells),
+// CSS `object-cover` does the cropping client-side.
+//
+// `card` and `hero` are still cropped to fixed aspect ratios because their
+// containers are fixed-aspect (album cover cards, full-width hero band).
 const TRANSFORMS: Record<ImageVariant, string> = {
-  thumb:    "f_auto,q_auto,c_fill,w_600,h_600,g_auto",
+  thumb:    "f_auto,q_auto,w_600",
   card:     "f_auto,q_auto,c_fill,w_800,h_500,g_auto",
   lightbox: "f_auto,q_auto,w_1600",
   hero:     "f_auto,q_auto,c_fill,w_2400,h_1200,g_auto",
