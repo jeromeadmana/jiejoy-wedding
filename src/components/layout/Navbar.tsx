@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { NAV_LINKS, WEDDING } from "@/lib/constants";
 
@@ -45,8 +46,8 @@ export function Navbar() {
           }`}
         >
           {/* Logo */}
-          <a
-            href="#"
+          <Link
+            href="/"
             className={`font-serif font-bold transition-all duration-500 ${
               scrolled
                 ? "text-lg text-charcoal"
@@ -54,13 +55,13 @@ export function Navbar() {
             }`}
           >
             {WEDDING.couple.partner1} & {WEDDING.couple.partner2}
-          </a>
+          </Link>
 
           {/* Desktop nav */}
           <ul className="hidden items-center gap-6 md:flex">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   className={`font-semibold tracking-wide uppercase transition-all duration-300 hover:text-gold ${
                     scrolled
@@ -69,7 +70,7 @@ export function Navbar() {
                   }`}
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
             <li>
@@ -114,9 +115,13 @@ export function Navbar() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 bg-surface md:hidden">
           <div className="flex items-center justify-between px-4 py-4 sm:px-6">
-            <span className="font-serif text-2xl font-bold text-charcoal">
+            <Link
+              href="/"
+              onClick={() => setMobileOpen(false)}
+              className="font-serif text-2xl font-bold text-charcoal"
+            >
               {WEDDING.couple.partner1} & {WEDDING.couple.partner2}
-            </span>
+            </Link>
             <button
               onClick={() => setMobileOpen(false)}
               className="text-charcoal cursor-pointer"
@@ -128,13 +133,13 @@ export function Navbar() {
           <ul className="flex flex-col items-center gap-8 pt-16">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className="text-lg font-semibold tracking-wide uppercase text-charcoal transition-colors hover:text-sage"
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
