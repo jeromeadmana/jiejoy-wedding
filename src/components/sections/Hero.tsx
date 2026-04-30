@@ -22,13 +22,11 @@ function getTimeLeft() {
 }
 
 export function Hero() {
-  const bgRef = useRef<HTMLDivElement>(null);
   const fgRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [timeLeft, setTimeLeft] = useState(getTimeLeft);
 
   useParallax([
-    { ref: bgRef, speed: 0.15 },
     { ref: fgRef, speed: 0.3 },
     { ref: contentRef, speed: 0.4, opacityFade: true },
   ]);
@@ -40,32 +38,22 @@ export function Hero() {
 
   return (
     <section id="hero" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black">
-      {/* Blurred background fill */}
-      <div ref={bgRef} className="absolute inset-0 z-0 overflow-hidden will-change-transform">
+      {/* Full-bleed monochrome hero image */}
+      <div ref={fgRef} className="absolute inset-0 z-0 will-change-transform">
         <Image
-          src="/images/wedding.jpg"
-          alt=""
+          src="/images/_26B9356.JPG"
+          alt="Jie and Joy"
           fill
-          className="object-cover object-center scale-125 blur-3xl"
-          priority
-          quality={20}
-          aria-hidden="true"
-        />
-      </div>
-      {/* Sharp foreground image */}
-      <div ref={fgRef} className="absolute inset-0 z-[1] will-change-transform">
-        <Image
-          src="/images/wedding.jpg"
-          alt="Wedding"
-          fill
-          className="object-contain"
+          className="object-cover object-center"
           priority
           quality={85}
+          sizes="100vw"
         />
       </div>
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 z-[2] bg-black/40" />
+      {/* Dark overlay — slightly stronger to keep the white serif heading
+          readable over the brighter areas of the monochrome shot */}
+      <div className="absolute inset-0 z-[1] bg-black/45" />
 
       {/* Content — cinematic staggered text reveal */}
       <div ref={contentRef} className="relative z-10 text-center text-white px-4 will-change-transform">
