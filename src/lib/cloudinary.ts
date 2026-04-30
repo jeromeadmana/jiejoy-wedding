@@ -1,10 +1,14 @@
+import "server-only";
 import { v2 as cloudinary } from "cloudinary";
+import { CLOUDINARY_CLOUD_NAME } from "./cloudinary-url";
 
 // The CLOUDINARY_URL env var (cloudinary://api_key:api_secret@cloud_name)
 // is auto-detected by the SDK on import. No explicit config() needed.
-
-export const CLOUDINARY_FOLDER_ROOT = "jiejoy-wedding/albums";
-export const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+//
+// This module imports the cloudinary Node SDK, which uses fs/path and
+// therefore cannot be loaded in the browser. The `server-only` import
+// above turns any client-side import into a build-time error so we
+// can't accidentally regress.
 
 function requireServerCreds(): { apiKey: string; apiSecret: string } {
   const config = cloudinary.config();
@@ -14,31 +18,6 @@ function requireServerCreds(): { apiKey: string; apiSecret: string } {
     );
   }
   return { apiKey: config.api_key, apiSecret: config.api_secret };
-}
-
-export type ImageVariant = "thumb" | "lightbox" | "hero" | "card";
-
-const TRANSFORMS: Record<ImageVariant, string> = {
-  thumb:    "f_auto,q_auto,c_fill,w_600,h_600,g_auto",
-  card:     "f_auto,q_auto,c_fill,w_800,h_500,g_auto",
-  lightbox: "f_auto,q_auto,w_1600",
-  hero:     "f_auto,q_auto,c_fill,w_2400,h_1200,g_auto",
-};
-
-/**
- * Returns a Cloudinary delivery URL for the given public_id and variant.
- * We never serve originals — every URL goes through f_auto/q_auto so
- * the free-tier 25 GB/mo bandwidth budget stays survivable.
- */
-export function cloudinaryUrl(publicId: string, variant: ImageVariant = "lightbox"): string {
-  return `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${TRANSFORMS[variant]}/${publicId}`;
-}
-
-/**
- * Builds the folder path for a given album slug.
- */
-export function albumFolder(slug: string): string {
-  return `${CLOUDINARY_FOLDER_ROOT}/${slug}`;
 }
 
 export type UploadSignature = {

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { albumFolder, signUpload } from "@/lib/cloudinary";
+import { signUpload } from "@/lib/cloudinary";
+import { albumFolder } from "@/lib/cloudinary-url";
 
 export async function POST(req: NextRequest) {
   if (!(await verifyAdmin(req))) {

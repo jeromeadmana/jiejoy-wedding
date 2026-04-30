@@ -7,7 +7,7 @@ import { ArrowLeft, Plus, Image as ImageIcon, Eye, EyeOff, ExternalLink } from "
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { cloudinaryUrl } from "@/lib/cloudinary";
+import { cloudinaryUrl } from "@/lib/cloudinary-url";
 import type { AlbumWithCounts } from "@/lib/types/gallery";
 
 export default function AdminGalleryPage() {

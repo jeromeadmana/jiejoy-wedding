@@ -35,7 +35,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { PhotoUploader } from "@/components/admin/PhotoUploader";
-import { cloudinaryUrl } from "@/lib/cloudinary";
+import { cloudinaryUrl } from "@/lib/cloudinary-url";
 import type { Album, Photo } from "@/lib/types/gallery";
 
 type AlbumWithPhotos = Album & { photos: Photo[] };
