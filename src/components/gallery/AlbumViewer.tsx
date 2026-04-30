@@ -2,8 +2,8 @@
 
 import { useState, useCallback } from "react";
 import { Shuffle } from "lucide-react";
-import { MasonryPhotoAlbum } from "react-photo-album";
-import "react-photo-album/masonry.css";
+import { RowsPhotoAlbum } from "react-photo-album";
+import "react-photo-album/rows.css";
 import Lightbox from "yet-another-react-lightbox";
 import Captions from "yet-another-react-lightbox/plugins/captions";
 import "yet-another-react-lightbox/styles.css";
@@ -56,10 +56,10 @@ export function AlbumViewer({ photos }: Props) {
         </button>
       </div>
 
-      <MasonryPhotoAlbum
+      <RowsPhotoAlbum
         photos={gridPhotos}
-        columns={(containerWidth) =>
-          containerWidth < 640 ? 2 : containerWidth < 1024 ? 3 : 4
+        targetRowHeight={(containerWidth) =>
+          containerWidth < 640 ? 200 : containerWidth < 1024 ? 260 : 320
         }
         spacing={12}
         onClick={({ index: i }) => setIndex(i)}
