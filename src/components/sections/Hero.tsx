@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { ChevronDown } from "lucide-react";
 import { useParallax } from "@/hooks/useParallax";
 
-const WEDDING_DATE = new Date("2026-09-26T09:00:00+08:00");
+const WEDDING_DATE = new Date("2026-09-26T08:30:00+08:00");
 
 function getTimeLeft() {
   const diff = WEDDING_DATE.getTime() - Date.now();

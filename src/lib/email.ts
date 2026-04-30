@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { WEDDING } from "@/lib/constants";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -162,8 +163,8 @@ function buildAttendingContent(data: RsvpEmailData): string {
       <tr>
         <td style="background-color: ${COLORS.lightGray}; border-left: 3px solid ${COLORS.pink}; border-radius: 0 8px 8px 0; padding: 20px 24px;">
           <p style="margin: 0 0 2px; font-family: 'Lato', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: ${COLORS.gold};">Ceremony</p>
-          <p style="margin: 0 0 4px; font-family: 'Playfair Display', Georgia, serif; font-size: 17px; color: ${COLORS.charcoal};">Our Lady of Pe&ntilde;afrancia Parish</p>
-          <p style="margin: 0; font-family: 'Lato', sans-serif; font-size: 14px; color: ${COLORS.warmGray};">9:00 AM</p>
+          <p style="margin: 0 0 4px; font-family: 'Playfair Display', Georgia, serif; font-size: 17px; color: ${COLORS.charcoal};">${WEDDING.ceremony.name}</p>
+          <p style="margin: 0; font-family: 'Lato', sans-serif; font-size: 14px; color: ${COLORS.warmGray};">${WEDDING.ceremony.time}</p>
         </td>
       </tr>
     </table>
@@ -171,8 +172,8 @@ function buildAttendingContent(data: RsvpEmailData): string {
       <tr>
         <td style="background-color: ${COLORS.lightGray}; border-left: 3px solid ${COLORS.gold}; border-radius: 0 8px 8px 0; padding: 20px 24px;">
           <p style="margin: 0 0 2px; font-family: 'Lato', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: ${COLORS.pink};">Reception</p>
-          <p style="margin: 0 0 4px; font-family: 'Playfair Display', Georgia, serif; font-size: 17px; color: ${COLORS.charcoal};">Royale Emelina</p>
-          <p style="margin: 0; font-family: 'Lato', sans-serif; font-size: 14px; color: ${COLORS.warmGray};">12:00 NN</p>
+          <p style="margin: 0 0 4px; font-family: 'Playfair Display', Georgia, serif; font-size: 17px; color: ${COLORS.charcoal};">${WEDDING.reception.name}</p>
+          <p style="margin: 0; font-family: 'Lato', sans-serif; font-size: 14px; color: ${COLORS.warmGray};">${WEDDING.reception.time}</p>
         </td>
       </tr>
     </table>

@@ -9,10 +9,10 @@ export const WEDDING = {
   tagline: "We're getting married!",
 
   ceremony: {
-    name: "Our Lady of Peñafrancia Parish",
-    address: "Peñafrancia Ave., Brgy. Peñafrancia, Naga City 4400, Camarines Sur",
-    time: "9:00 AM",
-    mapUrl: "https://maps.google.com/?q=Our+Lady+of+Peñafrancia+Shrine+Naga+City",
+    name: "Our Lady of Prompt Succor Parish Church",
+    address: "Haring, Canaman, Camarines Sur (Archdiocese of Caceres)",
+    time: "8:30 AM",
+    mapUrl: "https://maps.app.goo.gl/3SbLUdN2zQ5snwrs8",
   },
   reception: {
     name: "Royale Emelina",
@@ -25,7 +25,7 @@ export const WEDDING = {
   story: [
     {
       title: "How We Met",
-      date: "June 2024",
+      date: "June 2023",
       text: "It all started at a friend's dinner party. Across a crowded room, their eyes met over a shared love of terrible puns and good wine. What began as an evening of laughter turned into a connection neither could ignore.",
       image: "/images/date-night.jpg",
     },
@@ -62,7 +62,7 @@ export const WEDDING = {
     },
     {
       q: "What time should I arrive?",
-      a: "Please arrive at the ceremony venue by 8:45 AM to be seated before the 9:00 AM start. The reception begins at 12:00 NN.",
+      a: "Please arrive at the ceremony venue by 8:15 AM to be seated before the 8:30 AM start. The reception begins at 12:00 NN.",
     },
     {
       q: "Are children welcome?",

@@ -75,7 +75,7 @@ CREATE TRIGGER jiejoy_albums_updated_at
 INSERT INTO jiejoy_albums (slug, title, description, sort_order) VALUES
   ('engagement',    'Engagement',     'Pre-wedding portraits and the proposal.',         10),
   ('getting-ready', 'Getting Ready',  'Quiet moments before the ceremony.',              20),
-  ('ceremony',      'The Ceremony',   'Vows at Our Lady of Peñafrancia Parish.',         30),
+  ('ceremony',      'The Ceremony',   'Vows at Our Lady of Prompt Succor Parish Church.',         30),
   ('portraits',     'Portraits',      'Couple and family portraits.',                    40),
   ('reception',     'The Reception',  'Toasts, dinner, and tradition at Royale Emelina.', 50),
   ('dance-floor',   'The Dance Floor','After the toasts — the celebration.',             60);
