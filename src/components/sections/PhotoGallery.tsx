@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { X, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
 
 const PHOTOS = [
@@ -69,6 +70,21 @@ export function PhotoGallery() {
             />
           </div>
         ))}
+      </div>
+
+      {/* Link to full archival gallery */}
+      <div className="mt-10 flex justify-center">
+        <Link
+          href="/gallery"
+          className="group inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider transition-colors"
+          style={{ color: "var(--color-charcoal, #2C2C2C)" }}
+        >
+          Browse all our photos
+          <ArrowRight
+            size={16}
+            className="transition-transform duration-300 group-hover:translate-x-1"
+          />
+        </Link>
       </div>
 
       {/* Lightbox */}

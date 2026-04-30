@@ -12,6 +12,7 @@ import {
   Download,
   LogOut,
   Mail,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -130,6 +131,10 @@ export default function AdminDashboard() {
             <Button variant="secondary" size="sm" onClick={() => router.push("/admin/invitations")}>
               <Mail size={16} className="mr-1" />
               Invitations
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => router.push("/admin/gallery")}>
+              <ImageIcon size={16} className="mr-1" />
+              Gallery
             </Button>
             <Button variant="secondary" size="sm" onClick={handleLogout}>
               <LogOut size={16} className="mr-1" />
