@@ -26,6 +26,11 @@ export function PhotoUploader({ albumSlug, onPhotoUploaded }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const inFlight = useRef(0);
   const queueRef = useRef<QueueItem[]>([]);
+  // claimedRef holds IDs that drainQueue has already picked up. Needed
+  // because setState is async — without a synchronous claim mechanism the
+  // while-loop below would keep finding the same "pending" item until
+  // React re-renders, firing duplicate uploads.
+  const claimedRef = useRef<Set<string>>(new Set());
   queueRef.current = queue;
 
   const updateItem = (id: string, patch: Partial<QueueItem>) => {
@@ -38,9 +43,15 @@ export function PhotoUploader({ albumSlug, onPhotoUploaded }: Props) {
 
   const drainQueue = useCallback(async () => {
     while (inFlight.current < MAX_PARALLEL) {
-      const next = queueRef.current.find((q) => q.status === "pending");
+      const next = queueRef.current.find(
+        (q) => q.status === "pending" && !claimedRef.current.has(q.id),
+      );
       if (!next) break;
 
+      // Claim synchronously before doing anything else. setState below is
+      // async, so without this the next iteration would re-pick the same
+      // item.
+      claimedRef.current.add(next.id);
       inFlight.current++;
       updateItem(next.id, { status: "uploading", progress: 0 });
 
@@ -52,6 +63,7 @@ export function PhotoUploader({ albumSlug, onPhotoUploaded }: Props) {
           });
         })
         .finally(() => {
+          claimedRef.current.delete(next.id);
           inFlight.current--;
           drainQueue();
         });

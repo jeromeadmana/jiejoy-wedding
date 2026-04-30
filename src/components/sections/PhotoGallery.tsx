@@ -6,28 +6,43 @@ import Link from "next/link";
 import { X, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
 
-const PHOTOS = [
-  { src: "/images/wedding.jpg", alt: "Wedding day" },
-  { src: "/images/proposal.jpg", alt: "The proposal" },
-  { src: "/images/date-night.jpg", alt: "Date night" },
-  { src: "/images/road-trip.jpg", alt: "Laughing by the roadside on a motorbike adventure" },
+export type GalleryPhoto = {
+  key: string;
+  src: string;        // grid thumbnail
+  fullSrc: string;    // lightbox image
+  alt: string;
+  isCloudinary?: boolean;
+};
+
+// Fallback set used when no Cloudinary photos have been uploaded yet,
+// so the section never renders empty.
+const FALLBACK_PHOTOS: GalleryPhoto[] = [
+  { key: "wedding",    src: "/images/wedding.jpg",    fullSrc: "/images/wedding.jpg",    alt: "Wedding day" },
+  { key: "proposal",   src: "/images/proposal.jpg",   fullSrc: "/images/proposal.jpg",   alt: "The proposal" },
+  { key: "date-night", src: "/images/date-night.jpg", fullSrc: "/images/date-night.jpg", alt: "Date night" },
+  { key: "road-trip",  src: "/images/road-trip.jpg",  fullSrc: "/images/road-trip.jpg", alt: "Laughing by the roadside on a motorbike adventure" },
 ];
 
-export function PhotoGallery() {
+type Props = {
+  photos?: GalleryPhoto[];
+};
+
+export function PhotoGallery({ photos }: Props = {}) {
+  const displayPhotos = photos && photos.length > 0 ? photos : FALLBACK_PHOTOS;
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
 
-  const goNext = () => {
-    if (lightboxIndex === null) return;
-    setLightboxIndex((lightboxIndex + 1) % PHOTOS.length);
-  };
+  const goNext = useCallback(() => {
+    setLightboxIndex((curr) => (curr === null ? null : (curr + 1) % displayPhotos.length));
+  }, [displayPhotos.length]);
 
-  const goPrev = () => {
-    if (lightboxIndex === null) return;
-    setLightboxIndex((lightboxIndex - 1 + PHOTOS.length) % PHOTOS.length);
-  };
+  const goPrev = useCallback(() => {
+    setLightboxIndex((curr) =>
+      curr === null ? null : (curr - 1 + displayPhotos.length) % displayPhotos.length,
+    );
+  }, [displayPhotos.length]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -36,7 +51,7 @@ export function PhotoGallery() {
       if (e.key === "ArrowRight") goNext();
       if (e.key === "ArrowLeft") goPrev();
     },
-    [lightboxIndex]
+    [lightboxIndex, goNext, goPrev],
   );
 
   useEffect(() => {
@@ -54,20 +69,32 @@ export function PhotoGallery() {
     >
       {/* Masonry grid */}
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-        {PHOTOS.map((photo, index) => (
+        {displayPhotos.map((photo, index) => (
           <div
-            key={photo.src}
+            key={photo.key}
             className="mb-4 break-inside-avoid animate-on-scroll cursor-pointer overflow-hidden rounded-2xl"
             onClick={() => openLightbox(index)}
           >
-            <Image
-              src={photo.src}
-              alt={photo.alt}
-              width={600}
-              height={index % 2 === 0 ? 400 : 500}
-              className="w-full object-cover transition-transform duration-500 hover:scale-105"
-              loading="lazy"
-            />
+            {photo.isCloudinary ? (
+              // Cloudinary URLs already include f_auto/q_auto/w_* transforms,
+              // so next/image would just be redundant optimization on top.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                className="w-full object-cover transition-transform duration-500 hover:scale-105"
+                loading="lazy"
+              />
+            ) : (
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                width={600}
+                height={index % 2 === 0 ? 400 : 500}
+                className="w-full object-cover transition-transform duration-500 hover:scale-105"
+                loading="lazy"
+              />
+            )}
           </div>
         ))}
       </div>
@@ -119,14 +146,23 @@ export function PhotoGallery() {
             className="relative max-h-[85vh] max-w-[90vw]"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src={PHOTOS[lightboxIndex].src}
-              alt={PHOTOS[lightboxIndex].alt}
-              width={1200}
-              height={800}
-              className="max-h-[85vh] w-auto rounded-lg object-contain"
-              priority
-            />
+            {displayPhotos[lightboxIndex].isCloudinary ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={displayPhotos[lightboxIndex].fullSrc}
+                alt={displayPhotos[lightboxIndex].alt}
+                className="max-h-[85vh] w-auto rounded-lg object-contain"
+              />
+            ) : (
+              <Image
+                src={displayPhotos[lightboxIndex].fullSrc}
+                alt={displayPhotos[lightboxIndex].alt}
+                width={1200}
+                height={800}
+                className="max-h-[85vh] w-auto rounded-lg object-contain"
+                priority
+              />
+            )}
           </div>
 
           {/* Next */}
@@ -143,7 +179,7 @@ export function PhotoGallery() {
 
           {/* Counter */}
           <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-white/60">
-            {lightboxIndex + 1} / {PHOTOS.length}
+            {lightboxIndex + 1} / {displayPhotos.length}
           </p>
         </div>
       )}

@@ -113,10 +113,13 @@ export const RSVP_DEADLINE = new Date("2026-09-12T23:59:59+08:00");
 
 export const RSVP_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jieandjoy.site";
 
+// Root-prefixed anchors so the nav works from any route (e.g. /gallery,
+// /rsvp/[code]). On the home page the browser treats `/#x` as same-page
+// hash navigation; from anywhere else it routes to home and scrolls.
 export const NAV_LINKS = [
-  { label: "Our Story", href: "#our-story" },
-  { label: "Details", href: "#details" },
-  { label: "RSVP", href: "#rsvp" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Our Story", href: "/#our-story" },
+  { label: "Details", href: "/#details" },
+  { label: "RSVP", href: "/#rsvp" },
+  { label: "Gallery", href: "/#gallery" },
+  { label: "FAQ", href: "/#faq" },
 ] as const;
