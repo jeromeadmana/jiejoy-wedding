@@ -25,13 +25,13 @@ export const WEDDING = {
   story: [
     {
       title: "How We Met",
-      date: "June 2020",
+      date: "June 2024",
       text: "It all started at a friend's dinner party. Across a crowded room, their eyes met over a shared love of terrible puns and good wine. What began as an evening of laughter turned into a connection neither could ignore.",
       image: "/images/date-night.jpg",
     },
     {
       title: "Adventures Together",
-      date: "2021",
+      date: "2025",
       text: "From spontaneous road trips on a motorbike to laughing on the roadside with nowhere to be — they found joy in every detour. Every journey together became another chapter in a love story written on the open road.",
       image: "/images/road-trip.jpg",
     },
